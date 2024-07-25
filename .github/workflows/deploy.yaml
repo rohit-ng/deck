@@ -6,12 +6,14 @@ on:
       - main
     paths:
       - "teams/**"
+      - "global/**"
 
   push:
     branches:
       - main
     paths:
       - "teams/**"
+      - "global/**"
 
 jobs:
   extract_changed_files:
