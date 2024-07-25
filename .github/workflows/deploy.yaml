@@ -101,6 +101,7 @@ jobs:
         run: |
           # Run deck diff on the temporary directory
           deck gateway diff temp-repo --json-output > deck-diff --kong-addr ${{ secrets.KONG_ADDR }}
+          cat deck-diff
 
       - name: Clean Up
         if: always()
