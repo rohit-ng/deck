@@ -7,4 +7,3 @@ services:
       - name: google-home-page
         paths:
           - /sundrya
-          
