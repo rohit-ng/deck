@@ -91,7 +91,7 @@ jobs:
           mkdir temp-repo
           
           # Sync the repository to the temporary directory, excluding .github/workflows
-          rsync -av --exclude='.github/workflows/' --exclude='temp-repo/' . temp-repo/
+          rsync -av --exclude='.git/' --exclude='.github/workflows/' --exclude='temp-repo/' . temp-repo/
 
       - name: Deck diff
         id: diff
