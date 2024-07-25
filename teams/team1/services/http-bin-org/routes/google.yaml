@@ -6,4 +6,5 @@ services:
     routes:
       - name: google-home-page
         paths:
-          - /sundarya
+          - /sundrya
+          
