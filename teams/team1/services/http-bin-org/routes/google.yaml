@@ -4,6 +4,6 @@ services:
   - name: http-google-org
     url: http://google.com
     routes:
-      - name: google home page
+      - name: google-home-page
         paths:
           - /sundarya
