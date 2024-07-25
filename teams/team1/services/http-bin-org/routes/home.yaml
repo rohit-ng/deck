@@ -1,9 +1,0 @@
-_format_version: "3.0"
-
-services:
-  - name: http-bin-org
-    url: http://httpbin.org
-    routes:
-      - name: home
-        paths:
-          - /home
