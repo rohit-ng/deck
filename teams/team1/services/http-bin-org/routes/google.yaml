@@ -1,0 +1,10 @@
+_format_version: "3.0"
+
+services:
+  - name: http-google-org
+    url: http://google.com
+    routes:
+      - name: google-home-page
+        paths:
+          - /sundrya
+          
