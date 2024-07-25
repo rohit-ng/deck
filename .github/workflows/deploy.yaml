@@ -108,7 +108,6 @@ jobs:
           # Remove the temporary directory
           rm -rf temp-repo
 
-
       - name: Format file
         id: show
         if: github.event_name == 'pull_request'
