@@ -6,12 +6,14 @@ on:
       - main
     paths:
       - "teams/**"
+      - "global/**"
 
   push:
     branches:
       - main
     paths:
       - "teams/**"
+      - "global/**"
 
 jobs:
   extract_changed_files:
@@ -82,18 +84,30 @@ jobs:
             deck gateway validate "$file" --kong-addr ${{ secrets.KONG_ADDR }}
           done
 
+      - name: Prepare Temp Directory
+        id: prepare-temp
+        run: |
+          # Create a temporary directory
+          mkdir temp-repo
+          
+          # Sync the repository to the temporary directory, excluding .github/workflows
+          rsync -av --exclude='.github/workflows/' --exclude='temp-repo/' . temp-repo/
+
       - name: Deck diff
         id: diff
         timeout-minutes: 10
         if: github.event_name == 'pull_request'
         continue-on-error: false
-        env:
-          CHANGED_FILES: ${{ needs.extract_changed_files.outputs.changed_files }}
         run: |
-          for file in ${CHANGED_FILES}; do
-            echo "$file" >> deck-diff
-            deck gateway diff "$file" --json-output >> deck-diff --kong-addr ${{ secrets.KONG_ADDR }}
-          done
+          # Run deck diff on the temporary directory
+          deck gateway diff temp-repo --json-output > deck-diff --kong-addr ${{ secrets.KONG_ADDR }}
+
+      - name: Clean Up
+        if: always()
+        run: |
+          # Remove the temporary directory
+          rm -rf temp-repo
+
 
       - name: Format file
         id: show
