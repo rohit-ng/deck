@@ -1,7 +1,0 @@
-_format_version: "3.0"
-
-plugins:
-  - name: rate-limiting
-    config:
-      hour: 5
-      policy: local
