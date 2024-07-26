@@ -6,4 +6,4 @@ services:
     routes:
       - name: httpbin-home-page
         paths:
-          - /bin
+          - /test
