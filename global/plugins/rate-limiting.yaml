@@ -2,6 +2,7 @@ _format_version: "3.0"
 
 plugins:
   - name: rate-limiting
+    route: google-home-page
     config:
       hour: 9
       policy: local
