@@ -3,5 +3,5 @@ _format_version: "3.0"
 plugins:
   - name: rate-limiting
     config:
-      hour: 10
+      hour: 9
       policy: local
