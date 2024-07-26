@@ -108,7 +108,7 @@ jobs:
           TIMESTAMP=$(date +%Y%m%d%H%M%S)
           BACKUP_FILE="kong-backup-$TIMESTAMP.yaml"
           deck gateway dump --format yaml --output-file $BACKUP_FILE --kong-addr ${{ secrets.KONG_ADDR }}
-          aws s3 cp $BACKUP_FILE s3://kong/$BACKUP_FILE
+          aws s3 cp $BACKUP_FILE s3://d-kong/$BACKUP_FILE
 
       - name: Deck sync
         id: sync
@@ -124,8 +124,8 @@ jobs:
             echo "Sync failed. Proceeding to reset Kong configuration."
             deck gateway reset --kong-addr ${{ secrets.KONG_ADDR }}
             echo "Restoring previous configuration from dump file."
-            LATEST_BACKUP=$(aws s3 ls s3://kong/ | sort | tail -n 1 | awk '{print $4}')
-            aws s3 cp s3://kong/$LATEST_BACKUP kong-backup.yaml
+            LATEST_BACKUP=$(aws s3 ls s3://d-kong/ | sort | tail -n 1 | awk '{print $4}')
+            aws s3 cp s3://d-kong/$LATEST_BACKUP kong-backup.yaml
             deck gateway sync kong-backup.yaml --kong-addr ${{ secrets.KONG_ADDR }}
           else
             echo "Sync successful."
@@ -152,10 +152,10 @@ jobs:
       - name: Download backup configuration
         run: |
           if [ "${{ github.event.inputs.version }}" == "" ]; then
-            LATEST_BACKUP=$(aws s3 ls s3://kong/ | sort | tail -n 1 | awk '{print $4}')
-            aws s3 cp s3://kong/$LATEST_BACKUP kong-backup.yaml
+            LATEST_BACKUP=$(aws s3 ls s3://d-kong/ | sort | tail -n 1 | awk '{print $4}')
+            aws s3 cp s3://d-kong/$LATEST_BACKUP kong-backup.yaml
           else
-            aws s3 cp s3://kong/kong-backup-${{ github.event.inputs.version }}.yaml kong-backup.yaml
+            aws s3 cp s3://d-kong/kong-backup-${{ github.event.inputs.version }}.yaml kong-backup.yaml
           fi
 
       - name: Rollback to previous configuration
