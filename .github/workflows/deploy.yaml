@@ -16,32 +16,6 @@ on:
       - "global/**"
 
 jobs:
-  extract_changed_files:
-    runs-on: deck
-    name: Extract Changed Files
-    outputs:
-      changed_files: ${{ steps.changed-files.outputs.all_changed_files }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Get changed yaml files
-        id: changed-files
-        uses: tj-actions/changed-files@v44
-        with:
-          files_ignore: ".github/**"
-          files: |
-            **.yaml
-
-      - name: List all changed yaml files
-        if: steps.changed-files.outputs.any_changed == 'true'
-        env:
-          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-        run: |
-          echo "Changed yaml files:"
-          for file in ${CHANGED_FILES}; do
-            echo "$file was changed"
-          done
-
   deck_commands:
     runs-on: deck
     name: Run decK commands
@@ -84,14 +58,11 @@ jobs:
             deck gateway validate "$file" --kong-addr ${{ secrets.KONG_ADDR }}
           done
 
-      - name: Prepare Temp Directory
-        id: prepare-temp
+      - name: Prepare directory
+        id: config
         run: |
-          # Create a temporary directory
-          mkdir temp-repo
-          
-          # Sync the repository to the temporary directory, excluding .github/workflows
-          rsync -av --exclude='.git*/' --exclude='temp-repo/' . temp-repo/
+          mkdir configurations
+          rsync -av --exclude='.git*/' --exclude='configurations/' . configurations/
 
       - name: Deck diff
         id: diff
@@ -99,11 +70,10 @@ jobs:
         if: github.event_name == 'pull_request'
         continue-on-error: false
         run: |
-          # Run deck diff on the temporary directory
-          deck gateway diff temp-repo --json-output > deck-diff --kong-addr ${{ secrets.KONG_ADDR }}
+          deck gateway diff configurations --json-output > deck-diff --kong-addr ${{ secrets.KONG_ADDR }}
 
       - name: Format file
-        id: show
+        id: format
         if: github.event_name == 'pull_request'
         continue-on-error: false
         run: |
@@ -141,7 +111,7 @@ jobs:
           CHANGED_FILES: ${{ needs.extract_changed_files.outputs.changed_files }}
         run: |
           SYNC_FAILED=0
-            if ! deck gateway sync temp-repo --kong-addr ${{ secrets.KONG_ADDR }}; then
+            if ! deck gateway sync configurations --kong-addr ${{ secrets.KONG_ADDR }}; then
               SYNC_FAILED=1
             fi
 
@@ -153,9 +123,3 @@ jobs:
           else
             echo "Sync successful."
           fi
-
-      - name: Clean up temporary directory
-        if: always()
-        run: |
-          # Remove the temporary directory
-          rm -rf temp-repo
