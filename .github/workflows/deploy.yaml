@@ -69,8 +69,7 @@ jobs:
       - name: Prepare directory
         id: config
         run: |
-          mkdir configurations
-          rsync -av --exclude='*' --include='teams/***' --include='global/***' --exclude='configurations/' . configurations/
+          rsync -av --include='teams/***' --include='global/***' --exclude='*' . configurations/
 
       - name: Deck validate
         id: validate
