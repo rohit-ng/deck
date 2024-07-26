@@ -91,7 +91,7 @@ jobs:
           mkdir temp-repo
           
           # Sync the repository to the temporary directory, excluding .github/workflows
-          rsync -av --exclude='.git*/' --exclude='.github/workflows/' --exclude='temp-repo/' . temp-repo/
+          rsync -av --exclude='.git*/' --exclude='temp-repo/' . temp-repo/
 
       - name: Deck diff
         id: diff
@@ -101,13 +101,6 @@ jobs:
         run: |
           # Run deck diff on the temporary directory
           deck gateway diff temp-repo --json-output > deck-diff --kong-addr ${{ secrets.KONG_ADDR }}
-
-      - name: Clean Up
-        if: always()
-        run: |
-          # Remove the temporary directory
-          rm -rf temp-repo
-
 
       - name: Format file
         id: show
@@ -148,11 +141,9 @@ jobs:
           CHANGED_FILES: ${{ needs.extract_changed_files.outputs.changed_files }}
         run: |
           SYNC_FAILED=0
-          for file in ${CHANGED_FILES}; do
-            if ! deck gateway sync "$file" --kong-addr ${{ secrets.KONG_ADDR }}; then
+            if ! deck gateway sync temp-repo --kong-addr ${{ secrets.KONG_ADDR }}; then
               SYNC_FAILED=1
             fi
-          done
 
           if [ $SYNC_FAILED -ne 0 ]; then
             echo "Sync failed. Proceeding to reset Kong configuration."
@@ -162,3 +153,9 @@ jobs:
           else
             echo "Sync successful."
           fi
+
+      - name: Clean up temporary directory
+        if: always()
+        run: |
+          # Remove the temporary directory
+          rm -rf temp-repo
