@@ -23,8 +23,6 @@ jobs:
       contents: read
       id-token: write
       pull-requests: write
-    needs: extract_changed_files
-    if: needs.extract_changed_files.outputs.changed_files != ''
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -48,21 +46,16 @@ jobs:
         continue-on-error: false
         run: deck gateway ping --kong-addr ${{ secrets.KONG_ADDR }}
       
-      - name: Deck validate
-        id: validate
-        env:
-          CHANGED_FILES: ${{ needs.extract_changed_files.outputs.changed_files }}
-        run: |
-          deck gateway ping --kong-addr ${{ secrets.KONG_ADDR }}
-          for file in ${CHANGED_FILES}; do
-            deck gateway validate "$file" --kong-addr ${{ secrets.KONG_ADDR }}
-          done
-
       - name: Prepare directory
         id: config
         run: |
           mkdir configurations
           rsync -av --exclude='.git*/' --exclude='configurations/' . configurations/
+
+      - name: Deck validate
+        id: validate
+        run: |
+          deck gateway validate configurations --kong-addr ${{ secrets.KONG_ADDR }}
 
       - name: Deck diff
         id: diff
@@ -107,8 +100,6 @@ jobs:
         id: sync
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         continue-on-error: true
-        env:
-          CHANGED_FILES: ${{ needs.extract_changed_files.outputs.changed_files }}
         run: |
           SYNC_FAILED=0
             if ! deck gateway sync configurations --kong-addr ${{ secrets.KONG_ADDR }}; then
