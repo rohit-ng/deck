@@ -1,9 +1,9 @@
 _format_version: "3.0"
 
 services:
-  - name: http-google-org
-    url: http://google.com
+  - name: http-httpbin-org
+    url: http://httpbin.org
     routes:
-      - name: google-home-page
+      - name: httpbin-home-page
         paths:
-          - /google
+          - /bin
