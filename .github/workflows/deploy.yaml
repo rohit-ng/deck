@@ -30,6 +30,7 @@ jobs:
   deck_commands:
     runs-on: deck
     name: Run decK commands
+    if: github.event_name != 'workflow_dispatch'
     permissions:
       contents: read
       id-token: write
