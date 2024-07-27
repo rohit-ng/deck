@@ -200,5 +200,5 @@ jobs:
 
       - name: Rollback to previous configuration
         run: |
-          deck gateway reset --kong-addr ${{ secrets.KONG_ADDR }}
+          yes | deck gateway reset --kong-addr ${{ secrets.KONG_ADDR }}
           deck gateway sync kong-backup.yaml --kong-addr ${{ secrets.KONG_ADDR }}
