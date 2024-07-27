@@ -30,6 +30,7 @@ jobs:
   deck_commands:
     runs-on: deck
     name: Run decK commands
+    if: github.event_name != 'workflow_dispatch'
     permissions:
       contents: read
       id-token: write
@@ -149,8 +150,15 @@ jobs:
   rollback:
     runs-on: deck
     name: Rollback Kong configuration
-    if: github.event.inputs.rollback == 'true'
+    if: github.event.inputs.rollback == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
