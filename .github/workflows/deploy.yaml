@@ -150,7 +150,7 @@ jobs:
   rollback:
     runs-on: deck
     name: Rollback Kong configuration
-    if: github.event.inputs.rollback == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.event.inputs.rollback == 'true'
     permissions:
       contents: read
       id-token: write
