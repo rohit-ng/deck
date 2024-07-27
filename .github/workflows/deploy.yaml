@@ -137,8 +137,7 @@ jobs:
             fi
 
           if [ $SYNC_FAILED -ne 0 ]; then
-            echo "Sync failed. Proceeding to reset Kong configuration."
-            deck gateway reset --kong-addr ${{ secrets.KONG_ADDR }}
+            echo "Sync failed."
             echo "Restoring previous configuration from dump file."
             LATEST_BACKUP=$(aws s3 ls s3://d-kong/ | sort | tail -n 1 | awk '{print $4}')
             aws s3 cp s3://d-kong/$LATEST_BACKUP kong-backup.yaml
@@ -200,5 +199,4 @@ jobs:
 
       - name: Rollback to previous configuration
         run: |
-          yes | deck gateway reset --kong-addr ${{ secrets.KONG_ADDR }}
           deck gateway sync kong-backup.yaml --kong-addr ${{ secrets.KONG_ADDR }}
