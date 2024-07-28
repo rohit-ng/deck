@@ -43,13 +43,13 @@ jobs:
           role-to-assume: "arn:aws:iam::471112575944:role/github-actions"
           aws-region: ap-south-1
 
+
       - name: Extract environment name
         id: extract-env
         run: |
-          FILE_PATH=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '^(dev|staging|prod)/' | head -n 1)
-          ENVIRONMENT=$(echo $FILE_PATH | cut -d'/' -f1)
+          echo "Changed directories: ${{ steps.changed-files.outputs.changed_dir_names }}"
+          ENVIRONMENT=$(echo ${{ steps.changed-files.outputs.changed_dir_names }} | jq -r '.[]' | grep -E '^(dev|staging|prod)' | head -n 1)
           echo $ENVIRONMENT
-        shell: bash
 
       - name: Install necessary tools
         run: ./.github/scripts/install-tools.sh
