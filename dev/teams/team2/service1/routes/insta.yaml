@@ -7,3 +7,5 @@ services:
       - name: instagram-home-page
         paths:
           - /insta
+        path_handling: v1
+        strip_path: false
