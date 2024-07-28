@@ -52,7 +52,7 @@ jobs:
         id: role-arn
         run: |
           changed_dirs='${{ steps.changed-files.outputs.all_changed_files }}'         
-          chmod +x ./.github/scripts/set-role.sh && ./.github/scripts/set-role.sh $changed_dirs
+          chmod +x ./.github/scripts/set-gh-role.sh && ./.github/scripts/set-gh-role.sh $changed_dirs
         env:
           DEV_GH_ROLE: ${{ secrets.DEV_GH_ROLE }}         
 
@@ -122,7 +122,7 @@ jobs:
           TIMESTAMP=$(date +%Y%m%d%H%M%S)
           BACKUP_FILE="kong-backup-$TIMESTAMP.yaml"
           deck gateway dump --format yaml --output-file $BACKUP_FILE --kong-addr ${{ secrets.KONG_ADDR }}
-          aws s3 cp $BACKUP_FILE s3://d-kong/$BACKUP_FILE
+          aws s3 cp $BACKUP_FILE s3://${{ secrets.S3_BUCKET }}/$BACKUP_FILE
 
       - name: Deck sync
         id: sync
@@ -137,8 +137,8 @@ jobs:
           if [ $SYNC_FAILED -ne 0 ]; then
             echo "Sync failed."
             echo "Restoring previous configuration from dump file."
-            LATEST_BACKUP=$(aws s3 ls s3://d-kong/ | sort | tail -n 1 | awk '{print $4}')
-            aws s3 cp s3://d-kong/$LATEST_BACKUP kong-backup.yaml
+            LATEST_BACKUP=$(aws s3 ls s3://${{ secrets.S3_BUCKET }}/ | sort | tail -n 1 | awk '{print $4}')
+            aws s3 cp s3://${{ secrets.S3_BUCKET }}/$LATEST_BACKUP kong-backup.yaml
             deck gateway sync kong-backup.yaml --kong-addr ${{ secrets.KONG_ADDR }}
           else
             echo "Sync successful."
@@ -171,7 +171,7 @@ jobs:
         id: role-arn
         run: |
           changed_dirs='${{ steps.changed-files.outputs.all_changed_files }}'         
-          chmod +x ./.github/scripts/set-role.sh && ./.github/scripts/set-role.sh $changed_dirs
+          chmod +x ./.github/scripts/set-gh-role.sh && ./.github/scripts/set-gh-role.sh $changed_dirs
         env:
           DEV_GH_ROLE: ${{ secrets.DEV_GH_ROLE }}   
           
@@ -182,10 +182,10 @@ jobs:
       - name: Download backup configuration
         run: |
           if [ "${{ github.event.inputs.version }}" == "" ]; then
-            LATEST_BACKUP=$(aws s3 ls s3://d-kong/ | sort | tail -n 1 | awk '{print $4}')
-            aws s3 cp s3://d-kong/$LATEST_BACKUP kong-backup.yaml
+            LATEST_BACKUP=$(aws s3 ls s3://${{ secrets.S3_BUCKET }}/ | sort | tail -n 1 | awk '{print $4}')
+            aws s3 cp s3://${{ secrets.S3_BUCKET }}/$LATEST_BACKUP kong-backup.yaml
           else
-            aws s3 cp s3://d-kong/kong-backup-${{ github.event.inputs.version }}.yaml kong-backup.yaml
+            aws s3 cp s3://${{ secrets.S3_BUCKET }}/kong-backup-${{ github.event.inputs.version }}.yaml kong-backup.yaml
           fi
 
       - name: Rollback to previous configuration
