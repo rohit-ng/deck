@@ -10,7 +10,7 @@ environment=$1
 
 case "$environment" in
 dev)
-    ROLE_ARN=${ROOT_GH_ROLE}
+    ROLE_ARN=${DEV_GH_ROLE}
     ;;
 *)
     echo "Unknown account $environment"
