@@ -6,7 +6,7 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-environment=$1
+environment=$(echo $1 | jq -r '.[] | split("/") | .[0]' | sort | uniq)
 
 case "$environment" in
 dev)
