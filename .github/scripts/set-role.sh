@@ -1,15 +1,30 @@
 #!/bin/bash
 
-root_dir=$(echo "$1" | cut -d '/' -f 1)
+# Check if input is provided
+if [ -z "$1" ]; then
+  echo "No input provided"
+  exit 1
+fi
 
-case "$root_dir" in
+# Parse the environment from the input
+environment=$(echo $1 | jq -r '.[] | split("/") | .[0]' | sort | uniq)
+
+# Check if jq parsing was successful
+if [ -z "$environment" ]; then
+  echo "Failed to parse environment"
+  exit 1
+fi
+
+# Determine the role ARN based on the environment
+case "$environment" in
   dev)
     ROLE_ARN=${DEV_GH_ROLE}
     ;;
-    echo "Unknown account $root_dir"
+  *)
+    echo "Unknown environment $environment"
     exit 1
     ;;
 esac
 
-echo "Assuming role $ROLE_ARN for account $root_dir"
+echo "Assuming role $ROLE_ARN for account $environment"
 echo "role_arn=$ROLE_ARN" >> $GITHUB_OUTPUT
