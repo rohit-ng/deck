@@ -45,28 +45,8 @@ jobs:
           role-to-assume: "arn:aws:iam::471112575944:role/github-actions"
           aws-region: ap-south-1
 
-      - name: Install unzip
-        run: |
-          if ! command -v unzip &> /dev/null; then
-            sudo apt-get install -y unzip &> /dev/null
-          fi
-
-      - name: Install AWS CLI
-        run: |
-          if ! command -v aws &> /dev/null; then
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" &> /dev/null
-            unzip awscliv2.zip &> /dev/null
-            sudo ./aws/install &> /dev/null
-          fi
-
-      - name: Install decK
-        run: |
-          if ! command -v deck &> /dev/null; then
-            curl -sL https://github.com/kong/deck/releases/download/v1.38.1/deck_1.38.1_linux_amd64.tar.gz -o deck.tar.gz &> /dev/null
-            tar -xf deck.tar.gz -C /tmp &> /dev/null
-            sudo cp /tmp/deck /usr/local/bin/ &> /dev/null
-            rm deck.tar.gz &> /dev/null
-          fi
+      - name: Install necessary tools
+        run: ./.github/scripts/install-tools.sh
 
       - name: Deck ping
         id: ping
@@ -164,30 +144,9 @@ jobs:
           role-to-assume: "arn:aws:iam::471112575944:role/github-actions"
           aws-region: ap-south-1
           
-      - name: Install unzip
-        run: |
-          if ! command -v unzip &> /dev/null; then
-            sudo apt-get install -y unzip &> /dev/null
-          fi
-
-      - name: Install AWS CLI
-        run: |
-          if ! command -v aws &> /dev/null; then
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" &> /dev/null
-            unzip awscliv2.zip &> /dev/null
-            sudo ./aws/install &> /dev/null
-          fi
-
-      - name: Install decK
-        run: |
-          if ! command -v deck &> /dev/null; then
-            curl -sL https://github.com/kong/deck/releases/download/v1.38.1/deck_1.38.1_linux_amd64.tar.gz -o deck.tar.gz &> /dev/null
-            tar -xf deck.tar.gz -C /tmp &> /dev/null
-            sudo cp /tmp/deck /usr/local/bin/ &> /dev/null
-            rm deck.tar.gz &> /dev/null
-          fi
-
-      
+      - name: Install necessary tools
+        run: ./.github/scripts/install-tools.sh
+  
       - name: Download backup configuration
         run: |
           if [ "${{ github.event.inputs.version }}" == "" ]; then
