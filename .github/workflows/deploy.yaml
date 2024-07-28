@@ -51,10 +51,19 @@ jobs:
       - name:  Set Role ARN for AWS configuration
         id: role-arn
         run: |
-            changed_dirs=${{ steps.changed-files.outputs.all_changed_files }}
-            echo "changed_dirs: $changed_dirs"
-            environment=$(echo $changed_dirs | jq -R 'split(",") | .[] | split("/") | .[0]' | sort | uniq)
-            chmod +x ./.github/scripts/set-role.sh && ./.github/scripts/set-role.sh $environment
+          changed_dirs='["dev/global/plugins","dev/teams/team1/services/http-bin-org/routes","dev/teams/team2/service1/routes"]'
+          echo "changed_dirs: $changed_dirs"
+          
+          # Convert the JSON array to a newline-separated list
+          changed_dirs_list=$(echo $changed_dirs | jq -r '.[]')
+          echo "changed_dirs_list: $changed_dirs_list"
+          
+          # Extract the environment names
+          environment=$(echo "$changed_dirs_list" | awk -F'/' '{print $1}' | sort | uniq)
+          echo "environment: $environment"
+          
+          chmod +x ./.github/scripts/set-role.sh && ./.github/scripts/set-role.sh $environment
+
         env:
           DEV_GH_ROLE: ${{ secrets.DEV_GH_ROLE }}         
 
