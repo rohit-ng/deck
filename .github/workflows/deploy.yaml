@@ -37,12 +37,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: "arn:aws:iam::471112575944:role/github-actions"
-          aws-region: ap-south-1
-
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v44
@@ -54,16 +48,24 @@ jobs:
           quotepath: false
           escape_json: false
 
-      - name: Extract environment name
-        id: extract-env
+      - name:  Set Role ARN for AWS configuration
+        id: role-arn
         run: |
           changed_dirs=${{ steps.changed-files.outputs.all_changed_files }}
-          echo "::notice title=Changed Files::${changed_dirs}"
+          environment=$(echo $changed_dirs | jq -r '.[] | split("/") | .[0]' | sort | uniq)
+          chmod +x ./.github/scripts/install-tools.sh && ./.github/scripts/set-role.sh $environment
+        env:
+          DEV_GH_ROLE: ${{ secrets.DEV_GH_ROLE }}         
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ steps.role-arn.outputs.role_arn }}
+          aws-region: ap-south-1
 
       - name: Install necessary tools
         run: |
-          chmod +x ./.github/scripts/install-tools.sh
-          ./.github/scripts/install-tools.sh
+          chmod +x ./.github/scripts/install-tools.sh && ./.github/scripts/install-tools.sh
 
       - name: Deck ping
         id: ping
