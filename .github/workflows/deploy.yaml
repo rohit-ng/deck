@@ -52,7 +52,8 @@ jobs:
         id: role-arn
         run: |
           changed_dirs=${{ steps.changed-files.outputs.all_changed_files }}
-          chmod +x ./.github/scripts/set-role.sh && ./.github/scripts/set-role.sh $changed_dirs
+          environment=$(echo $changed_dirs | jq -r '.[] | split("/") | .[0]' | sort | uniq)
+          chmod +x ./.github/scripts/set-role.sh && ./.github/scripts/set-role.sh $environment
         env:
           DEV_GH_ROLE: ${{ secrets.DEV_GH_ROLE }}         
 
