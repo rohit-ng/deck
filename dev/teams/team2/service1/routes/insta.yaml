@@ -6,4 +6,4 @@ services:
     routes:
       - name: instagram-home-page
         paths:
-          - /insta
+          - /instaa

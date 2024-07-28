@@ -57,9 +57,8 @@ jobs:
       - name: Extract environment name
         id: extract-env
         run: |
-          echo "Changed directories: ${{ steps.changed-files.outputs.changed_dir_names }}"
-          ENVIRONMENT=$(echo ${{ steps.changed-files.outputs.changed_dir_names }} | jq -r '.[]' | grep -E '^(dev|staging|prod)' | head -n 1)
-          echo $ENVIRONMENT
+          changed_dirs=${{ steps.changed-files.outputs.all_changed_files }}
+          echo "::notice title=Changed Files::${changed_dirs}"
 
       - name: Install necessary tools
         run: |
@@ -75,7 +74,7 @@ jobs:
       - name: Prepare directory
         id: config
         run: |
-          rsync -av --include='teams/***' --include='global/***' --exclude='*' . configurations/
+          rsync -av --include='dev/***' --include='staging/***' --exclude='*' . configurations/
 
       - name: Deck validate
         id: validate
