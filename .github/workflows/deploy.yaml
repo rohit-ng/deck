@@ -47,12 +47,19 @@ jobs:
           json: true
           quotepath: false
           escape_json: false
+          
+      - name: Extract Environment
+        id: extract-environment
+        run: |
+          changed_dirs='${{ steps.changed-files.outputs.all_changed_files }}' 
+          changed_dirs_list=$(echo $changed_dirs | jq -r '.[]')
+          environment=$(echo "$changed_dirs_list" | awk -F'/' '{print $1}' | sort | uniq)
+          echo "environment=$environment" >> $GITHUB_ENV
 
       - name:  Set Role ARN for AWS configuration
         id: role-arn
         run: |
-          changed_dirs='${{ steps.changed-files.outputs.all_changed_files }}'         
-          chmod +x ./.github/scripts/set-gh-role.sh && ./.github/scripts/set-gh-role.sh $changed_dirs
+          chmod +x ./.github/scripts/set-gh-role.sh && ./.github/scripts/set-gh-role.sh ${{ env.environment }}
         env:
           DEV_GH_ROLE: ${{ secrets.DEV_GH_ROLE }}         
 
@@ -75,7 +82,7 @@ jobs:
       - name: Prepare directory
         id: config
         run: |
-          rsync -av --include='dev/***' --include='staging/***' --exclude='*' . configurations/
+          rsync -av --include='${{ env.environment }}/***' --exclude='*' . configurations/
 
       - name: Deck validate
         id: validate

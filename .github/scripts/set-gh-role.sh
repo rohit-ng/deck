@@ -6,13 +6,7 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-changed_dirs=$1
-
-# Convert the JSON array to a newline-separated list
-changed_dirs_list=$(echo $changed_dirs | jq -r '.[]')
-
-# Extract the environment names
-environment=$(echo "$changed_dirs_list" | awk -F'/' '{print $1}' | sort | uniq)
+environment=$1
 
 case "$environment" in
 dev)
