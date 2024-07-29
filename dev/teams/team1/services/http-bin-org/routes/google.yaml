@@ -7,3 +7,4 @@ services:
       - name: httpbin-home-page
         paths:
           - /google
+          
