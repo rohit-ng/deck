@@ -6,6 +6,6 @@ services:
     routes:
       - name: instagram-home-page
         paths:
-          - /instaa
+          - /insta
         path_handling: v1
         strip_path: false
