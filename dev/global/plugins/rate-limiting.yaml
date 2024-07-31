@@ -1,8 +1,0 @@
-_format_version: "3.0"
-
-plugins:
-  - name: rate-limiting
-    service: http-httpbin-org
-    config:
-      hour: 9
-      policy: local
