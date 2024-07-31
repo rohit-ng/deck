@@ -9,3 +9,4 @@ services:
           - /atlantis
         path_handling: v1
         strip_path: false
+        preserve_host: true  
