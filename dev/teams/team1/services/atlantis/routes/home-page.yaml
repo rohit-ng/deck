@@ -4,7 +4,7 @@ services:
   - name: atlantis
     url: https://testatlantis.gaussb.io/
     routes:
-      - name: atlantis-home-page
+      - name: atlantis-home
         paths:
           - /atlantis
         path_handling: v1
