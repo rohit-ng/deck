@@ -1,17 +1,28 @@
 _format_version: "3.0"
 
 services:
-  - name: atlantis
+  - name: atlantis-http
+    url: http://testatlantis.gaussb.io/
+    routes:
+      - name: atlantis-home-http
+        paths:
+          - /
+        path_handling: v1
+        strip_path: false
+        protocols:
+          - http
+        plugins:
+          - name: redirect
+            config:
+              http_to_https: true
+
+  - name: atlantis-https
     url: https://testatlantis.gaussb.io/
     routes:
-      - name: atlantis-home
+      - name: atlantis-home-https
         paths:
           - /atlantis
         path_handling: v1
         strip_path: false
-    plugins:
-      - name: request-transformer
-        config:
-          replace:
-            headers:
-              - Host:testatlantis.gaussb.io
+        protocols:
+          - https
