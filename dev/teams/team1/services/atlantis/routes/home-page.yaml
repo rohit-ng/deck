@@ -9,3 +9,10 @@ services:
           - /atlantis
         path_handling: v1
         strip_path: false
+    plugins:
+      - name: request-transformer
+        config:
+          headers:
+            add:
+              Host: testatlantis.gaussb.io
+
