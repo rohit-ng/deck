@@ -1,0 +1,11 @@
+_format_version: "3.0"
+
+services:
+  - name: atlantis
+    url: https://testatlantis.gaussb.io/
+    routes:
+      - name: atlantis-home-page
+        paths:
+          - /atlantis
+        path_handling: v1
+        strip_path: false
