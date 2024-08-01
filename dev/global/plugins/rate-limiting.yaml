@@ -4,3 +4,4 @@ plugins:
   config:
     hour: 9
     policy: local
+    limit_by: ip
