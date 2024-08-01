@@ -1,7 +1,0 @@
-plugins:
-- name: rate-limiting
-  service: logger
-  config:
-    hour: 9
-    policy: local
-    limit_by: ip
