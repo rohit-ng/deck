@@ -1,6 +1,0 @@
-plugins:
-- name: rate-limiting
-  service: atlantis
-  config:
-    hour: 19
-    policy: local
