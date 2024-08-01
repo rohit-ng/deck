@@ -1,11 +1,11 @@
 _format_version: "3.0"
 
 services:
-  - name: atlantis
-    url: https://testatlantis.gaussb.io
+  - name: logger
+    url: http://http-public-456732500.ap-south-1.elb.amazonaws.com/
     routes:
-      - name: atlantis-home
+      - name: logger-home
         paths:
-          - /atlantis$
+          - /logger
         path_handling: v1
         strip_path: true
