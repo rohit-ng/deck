@@ -2,5 +2,5 @@ plugins:
 - name: rate-limiting
   service: atlantis
   config:
-    hour: 9
+    hour: 19
     policy: local
