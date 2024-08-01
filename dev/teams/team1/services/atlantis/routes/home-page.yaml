@@ -2,7 +2,7 @@ _format_version: "3.0"
 
 services:
   - name: logger
-    url: http://http-public-456732500.ap-south-1.elb.amazonaws.com/
+    url: http://http-log.kong
     routes:
       - name: logger-home
         paths:
