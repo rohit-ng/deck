@@ -3,5 +3,4 @@ plugins:
   service: atlantis
   config:
     hour: 9
-    hour: 10000
     policy: local
