@@ -9,3 +9,10 @@ services:
           - /test
         path_handling: v1
         strip_path: false
+        plugins:
+          - name: request-termination
+            service: atlantis
+            config:
+              status_code: 302
+              message: So long and thanks for all the fish!
+              location: http://http-public-342125141.ap-south-1.elb.amazonaws.com/
