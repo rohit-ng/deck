@@ -1,28 +1,11 @@
 _format_version: "3.0"
 
 services:
-  - name: atlantis-http
-    url: http://testatlantis.gaussb.io/
+  - name: atlantis
+    url: http://http-public-342125141.ap-south-1.elb.amazonaws.com/
     routes:
-      - name: atlantis-home-http
+      - name: nginx-home
         paths:
-          - /
+          - /test
         path_handling: v1
         strip_path: false
-        protocols:
-          - http
-        plugins:
-          - name: redirect
-            config:
-              http_to_https: true
-
-  - name: atlantis-https
-    url: https://testatlantis.gaussb.io/
-    routes:
-      - name: atlantis-home-https
-        paths:
-          - /atlantis
-        path_handling: v1
-        strip_path: false
-        protocols:
-          - https
