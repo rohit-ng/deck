@@ -1,24 +1,11 @@
-# Define a new upstream with internal DNS name
-_upstreams:
-  - name: http-logger-upstream
-    slots: 100
-    targets:
-      - target: http-logger.internal:80
-        weight: 100
+_format_version: "3.0"
 
-# Define a new service that points to the upstream
-_services:
-  - name: http-logger-service
-    url: http://http-logger-upstream
-    tags:
-      - "internal"
-      
-# Define a route for the service
-_routes:
-  - name: http-logger-route
-    service: http-logger-service
-    hosts:
-      - kong.gaussb.io
-    paths:
-      - /web
-    strip_path: true
+services:
+  - name: logger
+    url: http://http-log.kong
+    routes:
+      - name: logger-home
+        paths:
+          - /logger
+        path_handling: v1
+        strip_path: true
